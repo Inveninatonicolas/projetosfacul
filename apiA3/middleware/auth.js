@@ -6,7 +6,7 @@ exports.verifyToken = async (req, res, next) => {
   if (!token) return res.status(403).json({ error: 'Token não fornecido' });
 
   try {
-    // Verifica token com Firebase
+   
     const decoded = await auth.verifyIdToken(token);
     req.user = { uid: decoded.uid, email: decoded.email };
     next();
