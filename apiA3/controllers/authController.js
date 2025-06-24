@@ -1,32 +1,21 @@
-const jwt = require('jsonwebtoken');
-const { getConnection } = require('../config/db');
-require('dotenv').config();
+const AuthService = require('../services/authService');
 
-async function login(req, res) {
-  const { email, password } = req.body;
-
-  try {
-    const conn = await getConnection();
-    const result = await conn.execute(
-      'SELECT * FROM usuarios WHERE email = :email AND password = :password',
-      [email, password]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'Credenciais inválidas' });
+class AuthController {
+    static async login(req, res) {
+        try {
+            const { email, senha } = req.body;
+            
+            if (!email || !senha) {
+                return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+            }
+            
+            const token = await AuthService.login(email, senha);
+            res.status(200).json({ token });
+            
+        } catch (error) {
+            res.status(401).json({ error: error.message });
+        }
     }
-
-    const user = result.rows[0];
-    const token = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
-    );
-
-    res.json({ token });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
 }
 
-module.exports = { login };
+module.exports = AuthController;

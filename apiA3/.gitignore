@@ -1,7 +1,3 @@
-node_modules/
-package-lock.json
+config/serviceAccountKey.json
 .env
-*.log
-*.tmp
-.vscode/
-.idea/package-lock.json
+       
